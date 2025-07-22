@@ -4,35 +4,67 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ừm ghét vcc</title>
-  <!-- Google Font: Pacifico -->
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <style>
     body {
-      background-color: #ffe6f0; /* nền hồng nhạt */
+      background-color: #ffe6f0;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
       font-family: 'Pacifico', cursive;
+      flex-direction: column;
+      text-align: center;
+      cursor: pointer;
     }
 
-    h1 {
+    #message, #instruction {
+      opacity: 0;
+      transition: opacity 1s ease;
+      padding: 0 10px;
+    }
+
+    #message {
       color: hotpink;
       font-size: 12vw;
-      text-align: center;
-      padding: 0 10px;
       word-break: break-word;
+      pointer-events: none;
+    }
+
+    #instruction {
+      color: #d63384;
+      font-size: 5vw;
+    }
+
+    .show {
+      opacity: 1;
+    }
+
+    .hide {
+      opacity: 0;
     }
 
     @media (min-width: 768px) {
-      h1 {
+      #message {
         font-size: 5em;
+      }
+      #instruction {
+        font-size: 1.5em;
       }
     }
   </style>
 </head>
-<body>
-  <h1>ừm ghét vcc</h1>
+<body onclick="showMessage()">
+  <div id="instruction" class="show">Chạm vào màn hình để xem thông điệp.</div>
+  <h1 id="message">ừm ghét vcc</h1>
+
+  <script>
+    function showMessage() {
+      document.getElementById('instruction').classList.remove('show');
+      document.getElementById('instruction').classList.add('hide');
+      document.getElementById('message').classList.add('show');
+    }
+  </script>
 </body>
 </html>
