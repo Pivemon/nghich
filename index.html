@@ -1,68 +1,25 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Thông điệp</title>
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <title>Ừm ghét vcc</title>
   <style>
     body {
-      background-color: #ffe6f0;
+      background-color: #ffe6f0; /* hồng nhạt */
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
-      font-family: 'Pacifico', cursive;
-      text-align: center;
     }
-
-    #message {
+    h1 {
       color: hotpink;
-      font-size: 12vw;
-      word-break: break-word;
-      padding: 0 10px;
-      opacity: 0;
-      transition: opacity 1s ease;
-    }
-
-    .show {
-      opacity: 1;
-    }
-
-    @media (min-width: 768px) {
-      #message {
-        font-size: 5em;
-      }
+      font-size: 3em;
+      font-family: sans-serif;
     }
   </style>
 </head>
 <body>
-  <h1 id="message">Đang tải...</h1>
-
-  <script>
-    const messageEl = document.getElementById('message');
-
-    // Nếu đang mở từ file:// (không qua HTTP), fetch sẽ bị chặn
-    if (window.location.protocol === "file:") {
-      messageEl.textContent = "⚠️ Không thể tải message.txt qua file://\nHãy chạy trên server hoặc GitHub Pages.";
-      messageEl.classList.add("show");
-    } else {
-      fetch("message.txt?ts=" + Date.now())
-        .then(response => {
-          if (!response.ok) throw new Error("Không tải được message.txt");
-          return response.text();
-        })
-        .then(text => {
-          messageEl.textContent = text.trim();
-          messageEl.classList.add("show");
-        })
-        .catch(error => {
-          console.error("Lỗi khi fetch:", error);
-          messageEl.textContent = "❌ Không thể tải thông điệp.";
-          messageEl.classList.add("show");
-        });
-    }
-  </script>
+  <h1>ừm ghét vcc</h1>
 </body>
 </html>
