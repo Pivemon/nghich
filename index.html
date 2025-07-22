@@ -2,22 +2,33 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ừm ghét vcc</title>
-  <!-- Link tới Google Fonts -->
+  <!-- Google Font: Pacifico -->
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <style>
     body {
-      background-color: #ffe6f0; /* hồng nhạt */
+      background-color: #ffe6f0; /* nền hồng nhạt */
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
+      font-family: 'Pacifico', cursive;
     }
+
     h1 {
       color: hotpink;
-      font-size: 3em;
-      font-family: 'Pacifico', cursive;
+      font-size: 8vw;
+      text-align: center;
+      padding: 0 10px;
+      word-break: break-word;
+    }
+
+    @media (min-width: 768px) {
+      h1 {
+        font-size: 3em;
+      }
     }
   </style>
 </head>
