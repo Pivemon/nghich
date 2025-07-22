@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ừm ghét vcc</title>
+  <title>Thông điệp</title>
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <style>
     body {
@@ -57,13 +57,29 @@
 </head>
 <body onclick="showMessage()">
   <div id="instruction" class="show">Chạm vào màn hình để xem thông điệp.</div>
-  <h1 id="message">ừm ghét vcc</h1>
+  <h1 id="message">...</h1>
 
   <script>
+    let loadedMessage = "";
+
+    // Gọi nội dung từ message.txt
+    fetch('message.txt')
+      .then(response => response.text())
+      .then(text => {
+        loadedMessage = text.trim(); // loại bỏ khoảng trắng thừa
+      })
+      .catch(error => {
+        loadedMessage = "[Không thể tải thông điệp]";
+        console.error('Lỗi khi tải message.txt:', error);
+      });
+
     function showMessage() {
       document.getElementById('instruction').classList.remove('show');
       document.getElementById('instruction').classList.add('hide');
-      document.getElementById('message').classList.add('show');
+
+      const msgElement = document.getElementById('message');
+      msgElement.textContent = loadedMessage || "Đang tải...";
+      msgElement.classList.add('show');
     }
   </script>
 </body>
