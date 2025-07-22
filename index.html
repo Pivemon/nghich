@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Thông điệp</title>
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
   <style>
     body {
       background-color: #ffe6f0;
@@ -41,19 +41,28 @@
   <h1 id="message">Đang tải...</h1>
 
   <script>
-    const msgEl = document.getElementById('message');
+    const messageEl = document.getElementById('message');
 
-    fetch('message.txt?ts=' + Date.now()) // tránh cache
-      .then(res => res.text())
-      .then(text => {
-        msgEl.textContent = text.trim();
-        msgEl.classList.add('show');
-      })
-      .catch(err => {
-        msgEl.textContent = 'Không thể tải thông điệp.';
-        console.error('Lỗi khi tải message.txt:', err);
-        msgEl.classList.add('show');
-      });
+    // Nếu đang mở từ file:// (không qua HTTP), fetch sẽ bị chặn
+    if (window.location.protocol === "file:") {
+      messageEl.textContent = "⚠️ Không thể tải message.txt qua file://\nHãy chạy trên server hoặc GitHub Pages.";
+      messageEl.classList.add("show");
+    } else {
+      fetch("message.txt?ts=" + Date.now())
+        .then(response => {
+          if (!response.ok) throw new Error("Không tải được message.txt");
+          return response.text();
+        })
+        .then(text => {
+          messageEl.textContent = text.trim();
+          messageEl.classList.add("show");
+        })
+        .catch(error => {
+          console.error("Lỗi khi fetch:", error);
+          messageEl.textContent = "❌ Không thể tải thông điệp.";
+          messageEl.classList.add("show");
+        });
+    }
   </script>
 </body>
 </html>
