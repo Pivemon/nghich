@@ -1,27 +1,408 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Ừm ghét vcc</title>
-  <!-- Link tới Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GPA Calculator - Custom M3 Dropdown</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+
   <style>
+    /* =========================
+       1. CORE VARIABLES & RESET
+       ========================= */
+    :root {
+      --font-main: "Be Vietnam Pro", sans-serif;
+      
+      /* Màu nền chính */
+      --bg-body: #111111;       /* Nền đen sâu */
+      --bg-card: #1E1F20;       /* Nền card xám đen giống M3 Web */
+      --bg-input: #2B2930;      /* Nền input pill */
+      
+      /* Màu Dropdown Custom */
+      --dropdown-bg: #2B2930;   /* Màu nền menu */
+      --dropdown-hover: #3F3D45; /* Màu khi di chuột */
+      --dropdown-active: #4F378B; /* Màu đang chọn */
+      
+      /* Text */
+      --text-main: #E3E3E3;
+      --text-sub: #C4C7C5;
+      
+      /* Brand Color */
+      --primary: #D0BCFF;
+      --on-primary: #381E72;
+    }
+
+    * { box-sizing: border-box; }
+
     body {
-      background-color: #ffe6f0; /* hồng nhạt */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
       margin: 0;
+      min-height: 100vh;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
     }
+
+    /* =========================
+       2. APP CARD
+       ========================= */
+    .app-card {
+      width: 100%;
+      max-width: 400px;
+      background: var(--bg-card);
+      border-radius: 28px;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.05); /* Viền mỏng tinh tế */
+    }
+
     h1 {
-      color: hotpink;
-      font-size: 3em;
-      font-family: 'Pacifico', cursive;
+      margin: 0;
+      font-size: 24px;
+      font-weight: 500;
+      text-align: center;
+      margin-bottom: 8px;
     }
+
+    /* =========================
+       3. CUSTOM DROPDOWN (TRÁI TIM CỦA BẢN NÀY)
+       ========================= */
+    
+    .input-wrapper {
+      position: relative; /* Để menu con định vị theo cái này */
+      margin-bottom: 12px;
+      z-index: 1; /* Default z-index */
+    }
+
+    /* Khi dropdown mở thì nổi lên trên cùng */
+    .input-wrapper.open {
+      z-index: 100;
+    }
+
+    .label {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+      margin-left: 12px;
+      display: block;
+      font-weight: 500;
+    }
+
+    /* Cái nút kích hoạt (Trigger) hình viên thuốc */
+    .select-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 48px;
+      background: var(--bg-input);
+      border-radius: 100px;
+      padding: 0 16px 0 20px;
+      cursor: pointer;
+      transition: 0.2s;
+      user-select: none;
+    }
+
+    .select-trigger:hover {
+      background: #36343B; /* Sáng hơn chút khi hover */
+    }
+
+    .select-value {
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .select-icon {
+      font-size: 24px;
+      color: var(--text-sub);
+      transition: transform 0.3s ease;
+    }
+
+    /* Xoay mũi tên khi mở */
+    .input-wrapper.open .select-icon {
+      transform: rotate(180deg);
+    }
+
+    /* MENU XỔ XUỐNG (Custom Div thay vì Select mặc định) */
+    .options-list {
+      position: absolute;
+      top: calc(100% + 4px); /* Cách nút bấm 4px */
+      left: 0;
+      width: 100%;
+      max-height: 0; /* Mặc định ẩn */
+      background: var(--dropdown-bg);
+      border-radius: 16px;
+      overflow-y: auto; /* Cho phép cuộn */
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      visibility: hidden;
+      
+      /* Scrollbar Customization - "Xịn" hơn mặc định */
+      scrollbar-width: thin;
+      scrollbar-color: #555 transparent;
+    }
+
+    /* Class active để hiện menu */
+    .input-wrapper.open .options-list {
+      max-height: 240px; /* Giới hạn chiều cao */
+      opacity: 1;
+      transform: translateY(0);
+      visibility: visible;
+      padding: 8px; /* Padding trong menu */
+    }
+
+    /* Từng dòng option */
+    .option-item {
+      padding: 12px 16px;
+      border-radius: 12px; /* Bo góc từng item giống M3 Navigation */
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text-sub);
+      transition: 0.1s;
+    }
+
+    .option-item:hover {
+      background-color: var(--dropdown-hover);
+      color: #fff;
+    }
+
+    .option-item.selected {
+      background-color: var(--dropdown-active); /* Màu tím active */
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Style thanh cuộn Webkit (Chrome/Edge) */
+    .options-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .options-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .options-list::-webkit-scrollbar-thumb {
+      background-color: #555;
+      border-radius: 20px;
+    }
+
+    /* =========================
+       4. BUTTON & RESULT
+       ========================= */
+    .btn-calc {
+      background: var(--primary);
+      color: var(--on-primary);
+      height: 48px;
+      border: none;
+      border-radius: 100px;
+      font-family: var(--font-main);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: opacity 0.2s;
+    }
+    .btn-calc:hover { opacity: 0.9; }
+
+    .result-box {
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      margin-top: 16px;
+      padding: 20px;
+      text-align: center;
+      display: none; /* Ẩn mặc định */
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .grade-big {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 12px;
+    }
+    .stat span { font-size: 11px; text-transform: uppercase; color: var(--text-sub); }
+    .stat b { display: block; font-size: 18px; margin-top: 4px; }
+
   </style>
 </head>
 <body>
-  <h1>ừm ghét vcc</h1>
+
+<div class="app-card">
+  <h1>Tính điểm GPA</h1>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+    
+    <div class="input-wrapper" id="dd-qt">
+      <span class="label">Quá trình</span>
+      <div class="select-trigger">
+        <span class="select-value">Chọn điểm</span>
+        <span class="material-symbols-rounded select-icon">arrow_drop_down</span>
+      </div>
+      <div class="options-list">
+        </div>
+      <input type="hidden" id="val-qt">
+    </div>
+
+    <div class="input-wrapper" id="dd-ck">
+      <span class="label">Cuối kỳ</span>
+      <div class="select-trigger">
+        <span class="select-value">Chọn điểm</span>
+        <span class="material-symbols-rounded select-icon">arrow_drop_down</span>
+      </div>
+      <div class="options-list"></div>
+      <input type="hidden" id="val-ck">
+    </div>
+
+  </div>
+
+  <div class="input-wrapper" id="dd-w">
+    <span class="label">Trọng số (Quá trình)</span>
+    <div class="select-trigger">
+      <span class="select-value">30% Quá trình</span> <span class="material-symbols-rounded select-icon">arrow_drop_down</span>
+    </div>
+    <div class="options-list">
+      <div class="option-item selected" data-value="0.3">30% Quá trình - 70% Cuối kỳ</div>
+      <div class="option-item" data-value="0.4">40% Quá trình - 60% Cuối kỳ</div>
+      <div class="option-item" data-value="0.5">50% Quá trình - 50% Cuối kỳ</div>
+    </div>
+    <input type="hidden" id="val-w" value="0.3">
+  </div>
+
+  <button class="btn-calc" onclick="calc()">Xem kết quả</button>
+
+  <div class="result-box" id="result">
+    <div class="grade-big" id="res-char">A</div>
+    <div class="stats-row">
+      <div class="stat"><span>Hệ 10</span><b id="res-10">--</b></div>
+      <div class="stat"><span>Hệ 4</span><b id="res-4">--</b></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ============================
+  // 1. GENERATE DATA ĐIỂM SỐ
+  // ============================
+  function genOptions(containerId) {
+    const list = document.querySelector(`#${containerId} .options-list`);
+    // Tạo từ 10.0 xuống 0.0
+    for (let i = 100; i >= 0; i-=5) { // Step 0.5 (nhân 10 để tránh lỗi float)
+      const val = (i / 10).toFixed(1);
+      const item = document.createElement("div");
+      item.className = "option-item";
+      item.textContent = val;
+      item.dataset.value = val;
+      list.appendChild(item);
+    }
+  }
+  
+  genOptions("dd-qt");
+  genOptions("dd-ck");
+
+  // ============================
+  // 2. XỬ LÝ SỰ KIỆN DROPDOWN
+  // ============================
+  const dropdowns = document.querySelectorAll('.input-wrapper');
+
+  dropdowns.forEach(dd => {
+    const trigger = dd.querySelector('.select-trigger');
+    const input = dd.querySelector('input[type="hidden"]');
+    const valueText = dd.querySelector('.select-value');
+    const options = dd.querySelectorAll('.option-item');
+
+    // Toggle mở/đóng
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation(); // Chặn sự kiện nổi bọt
+      // Đóng các dropdown khác trước
+      dropdowns.forEach(other => {
+        if(other !== dd) other.classList.remove('open');
+      });
+      dd.classList.toggle('open');
+    });
+
+    // Chọn option
+    options.forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        e.stopPropagation();
+        // Update giao diện
+        valueText.textContent = opt.textContent;
+        input.value = opt.dataset.value;
+        
+        // Active visual styling
+        dd.querySelectorAll('.option-item').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        
+        // Đóng menu
+        dd.classList.remove('open');
+      });
+    });
+  });
+
+  // Click ra ngoài thì đóng hết
+  document.addEventListener('click', () => {
+    dropdowns.forEach(dd => dd.classList.remove('open'));
+  });
+
+  // ============================
+  // 3. TÍNH TOÁN
+  // ============================
+  function calc() {
+    const q = parseFloat(document.getElementById("val-qt").value);
+    const c = parseFloat(document.getElementById("val-ck").value);
+    const w = parseFloat(document.getElementById("val-w").value);
+
+    if (isNaN(q) || isNaN(c)) {
+      alert("Vui lòng chọn điểm!");
+      return;
+    }
+
+    const d10 = q * w + c * (1 - w);
+    let d4, dc;
+
+    if (d10 >= 8.5) { d4 = 4.0; dc = "A"; }
+    else if (d10 >= 8.0) { d4 = 3.5; dc = "B+"; }
+    else if (d10 >= 7.0) { d4 = 3.0; dc = "B"; }
+    else if (d10 >= 6.5) { d4 = 2.5; dc = "C+"; }
+    else if (d10 >= 5.5) { d4 = 2.0; dc = "C"; }
+    else if (d10 >= 5.0) { d4 = 1.5; dc = "D+"; }
+    else if (d10 >= 4.0) { d4 = 1.0; dc = "D"; }
+    else { d4 = 0; dc = "F"; }
+
+    document.getElementById("res-10").textContent = d10.toFixed(2);
+    document.getElementById("res-4").textContent = d4;
+    document.getElementById("res-char").textContent = dc;
+    
+    // Hiện kết quả
+    const resBox = document.getElementById("result");
+    resBox.style.display = "block";
+    
+    // Reset animation
+    resBox.style.animation = 'none';
+    resBox.offsetHeight; /* trigger reflow */
+    resBox.style.animation = 'popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+  }
+</script>
+
 </body>
 </html>
