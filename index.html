@@ -384,7 +384,8 @@
             const d10 = q * w + c * (1 - w);
             let d4, dc;
 
-            if (d10 >= 8.5) { d4 = 4.0; dc = "A"; }
+            if (d10 >= 9.5) { d4 = 4.0; dc = "A+"; }
+            else if (d10 >= 8.5) { d4 = 3.5; dc = "A"; }
             else if (d10 >= 8.0) { d4 = 3.5; dc = "B+"; }
             else if (d10 >= 7.0) { d4 = 3.0; dc = "B"; }
             else if (d10 >= 6.5) { d4 = 2.5; dc = "C+"; }
